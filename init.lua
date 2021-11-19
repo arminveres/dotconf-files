@@ -22,6 +22,8 @@ vim.wo.number = true
 vim.wo.colorcolumn = '80,100'
 
 vim.opt.undofile = true --Save undo history
+vim.opt.undodir = '/tmp//, ~/.cache/nvim/.undo//'
+vim.opt.backupdir = '/tmp//, ~/.cache/nvim.backup//'
 
 
 -- Install packer and ensure that it is installed
@@ -85,6 +87,7 @@ vim.wo.signcolumn = 'yes'
 --Set colorscheme (order is important here)
 vim.o.termguicolors = true
 vim.g.gruvbox_italic = 1
+vim.g.gruvbox_contrast_dark = 'hard'
 vim.cmd [[colorscheme gruvbox]]
 
 --Set statusbar
@@ -243,13 +246,20 @@ local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require('cmp_nvim_lsp').update_capabilities(capabilities)
 
 -- Enable the following language servers
-local servers = { 'clangd', 'rust_analyzer', 'pyright' }
+local servers = { 'clangd', 'bashls', 'pyright', 'dockerls', 'jdtls', }
 for _, lsp in ipairs(servers) do
   nvim_lsp[lsp].setup {
     on_attach = on_attach,
     capabilities = capabilities,
   }
 end
+
+-- nvim-lsp-installer setup
+local lsp_installer = require("nvim-lsp-installer")
+
+lsp_installer.settings({
+    install_root_dir = ( vim.fn.stdpath"data" .. "lsp_server" )
+})
 
 -- Example custom server
 local sumneko_root_path = vim.fn.getenv 'HOME' .. '/.local/share/nvim/lsp_servers/sumneko_lua/extension/server' -- Change to your sumneko root installation
